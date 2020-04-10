@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
   std::string filename ("simple_color_tree.ot");
   std::cout << "Writing color tree to " << filename << std::endl;
   // write color tree
-  EXPECT_TRUE(tree.write(filename));
+  EXPECT_TRUE(tree.write(filename, 0));
 
 
   // read tree file
@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
     EXPECT_EQ(tree.size(), tree.calcNumNodes());
     EXPECT_EQ(tree.size(), insertedSize - 1);
     
-    EXPECT_TRUE(tree.write("simple_color_tree_ed.ot"));
+    EXPECT_TRUE(tree.write("simple_color_tree_ed.ot", 0));
     
   }
 

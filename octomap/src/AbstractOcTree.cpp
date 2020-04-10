@@ -42,7 +42,7 @@ namespace octomap {
 
   }
 
-  bool AbstractOcTree::write(const std::string& filename) const{
+  bool AbstractOcTree::write(const std::string& filename, unsigned encoding) const{
      std::ofstream file(filename.c_str(), std::ios_base::out | std::ios_base::binary);
 
      if (!file.is_open()){
@@ -50,7 +50,7 @@ namespace octomap {
        return false;
      } else {
        // TODO: check is_good of finished stream, return
-       write(file);
+       write(file, encoding);
        file.close();
      }
 
@@ -58,15 +58,16 @@ namespace octomap {
    }
 
 
-  bool AbstractOcTree::write(std::ostream &s) const{
+  bool AbstractOcTree::write(std::ostream &s, unsigned encoding) const{
     s << fileHeader <<"\n# (feel free to add / change comments, but leave the first line as it is!)\n#\n";
     s << "id " << getTreeType() << std::endl;
     s << "size "<< size() << std::endl;
     s << "res " << getResolution() << std::endl;
+    s << "encoding " << encoding << std::endl;
     s << "data" << std::endl;
 
     // write the actual data:
-    writeData(s);
+    writeData(s, encoding);
     // TODO: ret.val, checks stream?
     return true;
   }
@@ -97,7 +98,8 @@ namespace octomap {
     std::string id;
     unsigned size;
     double res;
-    if (!AbstractOcTree::readHeader(s, id, size, res))
+    unsigned encoding;
+    if (!AbstractOcTree::readHeader(s, id, size, res, encoding))
       return NULL;
 
 
@@ -108,7 +110,7 @@ namespace octomap {
 
     if (tree){
       if (size > 0)
-        tree->readData(s);
+        tree->readData(s, encoding);
 
       OCTOMAP_DEBUG_STR("Done ("<< tree->size() << " nodes)");
     }
@@ -116,10 +118,11 @@ namespace octomap {
     return tree;
   }
 
-  bool AbstractOcTree::readHeader(std::istream& s, std::string& id, unsigned& size, double& res){
+  bool AbstractOcTree::readHeader(std::istream& s, std::string& id, unsigned& size, double& res, unsigned& encoding){
     id = "";
     size = 0;
     res = 0.0;
+    encoding = 0;
 
     std::string token;
     bool headerRead = false;
@@ -146,6 +149,8 @@ namespace octomap {
         s >> res;
       else if (token == "size")
         s >> size;
+      else if (token == "encoding")
+        s >> encoding;
       else{
         OCTOMAP_WARNING_STR("Unknown keyword in OcTree header, skipping: "<<token);
         char c;

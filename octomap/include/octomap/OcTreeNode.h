@@ -87,6 +87,11 @@ namespace octomap {
     /// adds p to the node's logOdds value (with no boundary / threshold checking!)
     void addValue(const float& p);
     
+    /// Read node payload (data only) from binary stream. overrides OcTreeDataNode
+    std::istream& readData(std::istream &s, unsigned encoding);
+
+    /// Write node payload (data only) to binary stream. overrides OcTreeDataNode
+    std::ostream& writeData(std::ostream &s, unsigned encoding) const;
 
   protected:
     // "value" stores log odds occupancy probability

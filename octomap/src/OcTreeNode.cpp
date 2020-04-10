@@ -92,6 +92,62 @@ namespace octomap {
     value += logOdds;
   }
   
+
+  float proba_decode(unsigned value, unsigned encoding) {
+    return float(value) / ((1ULL << (8*encoding)) - 1);
+  }
+
+  unsigned proba_encode(float value, unsigned encoding) {
+    return round(value * ((1ULL << (8*encoding)) - 1));
+  }
+
+  std::istream& OcTreeNode::readData(std::istream &s, unsigned encoding) {
+    if (encoding == 0) {
+      OcTreeDataNode<float>::readData(s, encoding);
+    } else if (encoding <= 4) {
+      unsigned value_encoded = 0;
+      for (int i=0;i<encoding;i++) {
+        unsigned char byte;
+        s.read((char*) &byte, 1);
+        value_encoded += (byte << (8*i));
+      }
+
+      value = logodds(proba_decode(value_encoded, encoding));
+    } else {
+      std::cout << "readData: unsupported encoding: " << encoding << std::endl;
+      exit(-1);
+    };
+    return s;
+  }
+
+
+  /// Write node payload (data only) to binary stream
+  std::ostream& OcTreeNode::writeData(std::ostream &s, unsigned encoding) const {
+    //std::cout << ".." << std::endl;
+    if (encoding == 0) {
+      OcTreeDataNode<float>::writeData(s, encoding);
+    } else if (encoding <= 4) {
+      //std::cout << "v:" << probability << std::endl;
+      unsigned value_encoded = proba_encode(probability(value), encoding); // set between 0 and 2**encoding-1
+      //std::cout << value_encoded << "/" << ((1 << (8*encoding)) - 1) << std::endl;
+      for (int i=0;i<encoding;i++) {
+        char byte = value_encoded;
+        s.write((const char*) &byte, 1);
+        value_encoded = value_encoded >> 8;
+      };
+
+
+      if (value_encoded != 0) {
+        std::cout << "writeData: error while encoding data. (" << value_encoded << ")" << std::endl;
+        exit(-1);
+      }
+      //std::cout << "ok" << std::endl;
+    } else {
+      std::cout << "writeData: unsupported encoding: " << encoding << std::endl;
+      exit(-1);
+    }
+    return s;
+  }
 } // end namespace
 
 

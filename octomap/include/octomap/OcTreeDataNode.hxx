@@ -111,14 +111,14 @@ namespace octomap {
   // ============================================================
 
   template <typename T>
-  std::istream& OcTreeDataNode<T>::readData(std::istream &s) {
+  std::istream& OcTreeDataNode<T>::readData(std::istream &s, unsigned encoding) {
     s.read((char*) &value, sizeof(value));
     return s;
   }
 
 
   template <typename T>
-  std::ostream& OcTreeDataNode<T>::writeData(std::ostream &s) const{
+  std::ostream& OcTreeDataNode<T>::writeData(std::ostream &s, unsigned encoding) const{
     s.write((const char*) &value, sizeof(value));
     return s;
   }

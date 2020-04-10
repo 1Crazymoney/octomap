@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     OcTree emptyTree(0.999);
     EXPECT_EQ(emptyTree.size(), 0);
     EXPECT_TRUE(emptyTree.writeBinary("empty.bt"));
-    EXPECT_TRUE(emptyTree.write("empty.ot"));
+    EXPECT_TRUE(emptyTree.write("empty.ot", 0));
 
     OcTree emptyReadTree(0.2);
     EXPECT_TRUE(emptyReadTree.readBinary("empty.bt"));
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
 
     std::cout <<"    Write to .ot / read through AbstractOcTree\n";
     // now write to .ot, read & compare
-    EXPECT_TRUE(tree.write(filenameOt));
+    EXPECT_TRUE(tree.write(filenameOt, 0));
     
     AbstractOcTree* readTreeAbstract = AbstractOcTree::read(filenameOt);
     EXPECT_TRUE(readTreeAbstract);
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
     colorTree.updateNode(point3d(0.1f, 0.1f, 0.1f), true);
     colorTree.setNodeColor(0.1f, 0.1f, 0.1f, 0, 0, 255);
 
-    EXPECT_TRUE(colorTree.write(filenameColor));
+    EXPECT_TRUE(colorTree.write(filenameColor, 0));
     AbstractOcTree* readTreeAbstract = AbstractOcTree::read(filenameColor);
     EXPECT_TRUE(readTreeAbstract);
     EXPECT_EQ(colorTree.getTreeType(),  readTreeAbstract->getTreeType());
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
     //colorTree.updateNode(point3d(0.1f, 0.1f, 0.1f), true);
     //colorTree.setNodeColor(0.1f, 0.1f, 0.1f, 0, 0, 255);
 
-    EXPECT_TRUE(stampedTree.write(filenameStamped));
+    EXPECT_TRUE(stampedTree.write(filenameStamped, 0));
     AbstractOcTree* readTreeAbstract = AbstractOcTree::read(filenameStamped);
     EXPECT_TRUE(readTreeAbstract);
     EXPECT_EQ(stampedTree.getTreeType(), readTreeAbstract->getTreeType());

@@ -44,11 +44,13 @@ using namespace std;
 using namespace octomap;
 
 void printUsage(char* self){
-  std::cerr << "\nUSAGE: " << self << " input.(ot|bt|cot) [output.ot]\n\n";
-
-  std::cerr << "This tool converts between OctoMap octree file formats, \n"
-      "e.g. to convert old legacy files to the new .ot format or to convert \n"
-      "between .bt and .ot files. The default output format is .ot.\n\n";
+  cout << "Usage: "<<self<<" [OPTIONS] input.(ot|bt|cot) [output.ot]" << endl;
+  cout << "\tOPTIONS:" << endl;
+  cout << "\t -e <n>           Enable fixed-point encoding, precision in bytes between 1 and 4\n\n";
+  cout << "This tool converts between OctoMap octree file formats, \n";
+  cout << "e.g. to convert old legacy files to the new .ot format or to convert \n";
+  cout << "between .bt and .ot files. The default output format is .ot.\n";
+  cout << "It can also be used to reduce compress otrees by lowering precision.\n\n";
 
   exit(0);
 }
@@ -57,13 +59,41 @@ int main(int argc, char** argv) {
   string inputFilename = "";
   string outputFilename = "";
 
-  if (argc < 2 || argc > 3 || (argc > 1 && strcmp(argv[1], "-h") == 0)){
+  bool show_help = false;
+  if(argc == 1) show_help = true;
+  for(int i = 1; i < argc && !show_help; i++) {
+      if(strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-help") == 0 ||
+          strcmp(argv[i], "--usage") == 0 || strcmp(argv[i], "-usage") == 0 ||
+          strcmp(argv[i], "-h") == 0
+        )
+              show_help = true;
+  }
+
+  if(show_help) {
     printUsage(argv[0]);
   }
 
-  inputFilename = std::string(argv[1]);
-  if (argc == 3)
-    outputFilename = std::string(argv[2]);
+  if (argc < 2 || argc > 5){
+    printUsage(argv[0]);
+  }
+
+  int arg = 1;
+  int encoding = 0;
+
+  if (! strcmp(argv[arg], "-e")) {
+    encoding = atoi(argv[++arg]);
+    ++arg;
+  }
+
+  if (argc == arg) {
+    printUsage(argv[0]);
+  }
+
+  inputFilename = std::string(argv[arg]);
+  ++arg;
+
+  if (argc > arg)
+    outputFilename = std::string(argv[arg]);
   else{
     outputFilename = inputFilename + ".ot";
   }
@@ -100,7 +130,7 @@ int main(int argc, char** argv) {
       file.clear(); // clear eofbit of istream
       file.seekg(streampos);
       ColorOcTree* colorTree = new ColorOcTree(0.1);
-      colorTree->readData(file);
+      colorTree->readData(file, 0); // Default encoding is zero.
       if (colorTree->size() > 1 && file.good()){
         OCTOMAP_WARNING_STR("Detected Binary ColorOcTree to convert. \nPlease check and update the new file header (resolution will likely be wrong).");
         tree = colorTree;
@@ -132,7 +162,7 @@ int main(int argc, char** argv) {
     }
   } else{
     std::cerr << "Writing general OcTree file" << std::endl;
-    if (!tree->write(outputFilename)){
+    if (!tree->write(outputFilename, encoding)){
       std::cerr << "Error writing to " << outputFilename << std::endl;
       exit(-2);
     }

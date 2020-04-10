@@ -760,16 +760,16 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  std::ostream& OcTreeBaseImpl<NODE,I>::writeData(std::ostream &s) const{
+  std::ostream& OcTreeBaseImpl<NODE,I>::writeData(std::ostream &s, unsigned encoding) const{
     if (root)
-      writeNodesRecurs(root, s);
+      writeNodesRecurs(root, s, encoding);
 
     return s;
   }
 
   template <class NODE,class I>
-  std::ostream& OcTreeBaseImpl<NODE,I>::writeNodesRecurs(const NODE* node, std::ostream &s) const{
-    node->writeData(s);
+  std::ostream& OcTreeBaseImpl<NODE,I>::writeNodesRecurs(const NODE* node, std::ostream &s, unsigned encoding) const{
+    node->writeData(s, encoding);
 
     // 1 bit for each children; 0: empty, 1: allocated
     std::bitset<8> children;
@@ -790,7 +790,7 @@ namespace octomap {
     // recursively write children
     for (unsigned int i=0; i<8; i++) {
       if (children[i] == 1) {
-        this->writeNodesRecurs(getNodeChild(node, i), s);
+        this->writeNodesRecurs(getNodeChild(node, i), s, encoding);
       }
     }
 
@@ -798,7 +798,7 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  std::istream& OcTreeBaseImpl<NODE,I>::readData(std::istream &s) {
+  std::istream& OcTreeBaseImpl<NODE,I>::readData(std::istream &s, unsigned encoding) {
 
     if (!s.good()){
       OCTOMAP_WARNING_STR(__FILE__ << ":" << __LINE__ << "Warning: Input filestream not \"good\"");
@@ -814,16 +814,16 @@ namespace octomap {
     }
 
     root = new NODE();
-    readNodesRecurs(root, s);
+    readNodesRecurs(root, s, encoding);
 
     tree_size = calcNumNodes();  // compute number of nodes
     return s;
   }
 
   template <class NODE,class I>
-  std::istream& OcTreeBaseImpl<NODE,I>::readNodesRecurs(NODE* node, std::istream &s) {
+  std::istream& OcTreeBaseImpl<NODE,I>::readNodesRecurs(NODE* node, std::istream &s, unsigned encoding) {
 
-    node->readData(s);
+    node->readData(s, encoding);
 
     char children_char;
     s.read((char*)&children_char, sizeof(char));
@@ -836,7 +836,7 @@ namespace octomap {
     for (unsigned int i=0; i<8; i++) {
       if (children[i] == 1){
         NODE* newNode = createNodeChild(node, i);
-        readNodesRecurs(newNode, s);
+        readNodesRecurs(newNode, s, encoding);
       }
     }
 

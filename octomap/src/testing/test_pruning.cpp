@@ -209,7 +209,7 @@ int main(int argc, char** argv) {
       EXPECT_TRUE(tree.nodeChildExists(parentNode, 0));
       const float value = 0.123f;
       newNodeCreated->setValue(value);
-      tree.write("pruning_test_edited.ot");
+      tree.write("pruning_test_edited.ot", 0);
       
       EXPECT_EQ(tree.size(), tree.calcNumNodes());
       EXPECT_EQ(tree.size(), insertedSize+1);
@@ -238,7 +238,7 @@ int main(int argc, char** argv) {
       
     }
     
-    tree.write("pruning_test_out.ot");
+    tree.write("pruning_test_out.ot", 0);
     
     {
       std::cout << "\nClearing tree / recursive delete\n===============================\n";
@@ -257,7 +257,7 @@ int main(int argc, char** argv) {
       EXPECT_EQ(tree.size(), 0);      
     }
 
-    tree.write("pruning_test_out.ot");
+    tree.write("pruning_test_out.ot", 0);
     std::cerr << "Test successful.\n";
     return 0;
 

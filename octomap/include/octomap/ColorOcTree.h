@@ -96,8 +96,8 @@ namespace octomap {
     ColorOcTreeNode::Color getAverageChildColor() const;
   
     // file I/O
-    std::istream& readData(std::istream &s);
-    std::ostream& writeData(std::ostream &s) const;
+    std::istream& readData(std::istream &s, unsigned encoding);
+    std::ostream& writeData(std::ostream &s, unsigned encoding) const;
     
   protected:
     Color color;

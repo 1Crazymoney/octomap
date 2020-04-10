@@ -106,11 +106,13 @@ namespace octomap {
 
     // file IO:
 
-    /// Read node payload (data only) from binary stream
-    std::istream& readData(std::istream &s);
+    /// Read node payload (data only) from binary stream using `encoding`
+    /// bytes per value.
+    std::istream& readData(std::istream &s, unsigned encoding);
 
-    /// Write node payload (data only) to binary stream
-    std::ostream& writeData(std::ostream &s) const;
+    /// Write node payload (data only) to binary stream using `encoding`
+    /// bytes per value.
+    std::ostream& writeData(std::ostream &s, unsigned encoding) const;
 
 
     /// Make the templated data type available from the outside

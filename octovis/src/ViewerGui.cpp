@@ -737,7 +737,7 @@ void ViewerGui::on_actionSave_file_triggered(){
       }
     }
     else if (fileinfo.suffix() == "ot"){
-      r->octree->write(std_filename);
+      r->octree->write(std_filename, 0);
     }
     else {
       QMessageBox::warning(this, "Unknown file",

@@ -104,9 +104,11 @@ namespace octomap {
 //    const tree_iterator end_tree() const = 0;
 
     /// Write file header and complete tree to file (serialization)
-    bool write(const std::string& filename) const;
+    /// Encoding parameter can be used to specify the number of bytes per value.
+    bool write(const std::string& filename, unsigned encoding) const;
     /// Write file header and complete tree to stream (serialization)
-    bool write(std::ostream& s) const;
+    /// Encoding parameter can be used to specify the number of bytes per value.
+    bool write(std::ostream& s, unsigned encoding) const;
 
     /**
      * Creates a certain OcTree (factory pattern)
@@ -139,17 +141,17 @@ namespace octomap {
      * For general file IO, you
      * should probably use AbstractOcTree::read() instead.
      */
-    virtual std::istream& readData(std::istream &s) = 0;
+    virtual std::istream& readData(std::istream &s, unsigned encoding) = 0;
 
     /// Write complete state of tree to stream (without file header) unmodified.
     /// Pruning the tree first produces smaller files (lossless compression)
-    virtual std::ostream& writeData(std::ostream &s) const = 0;
+    virtual std::ostream& writeData(std::ostream &s, unsigned encoding) const = 0;
   private:
     /// create private store, Construct on first use
     static std::map<std::string, AbstractOcTree*>& classIDMapping();
 
   protected:
-    static bool readHeader(std::istream &s, std::string& id, unsigned& size, double& res);
+    static bool readHeader(std::istream &s, std::string& id, unsigned& size, double& res, unsigned& encoding);
     static void registerTreeType(AbstractOcTree* tree);
 
     static const std::string fileHeader;

@@ -314,12 +314,14 @@ namespace octomap {
      * for this the tree needs to be already created.
      * For general file IO, you
      * should probably use AbstractOcTree::read() instead.
+     * encoding is the number of bytes per value, as specified by the header.
      */
-    std::istream& readData(std::istream &s);
+    std::istream& readData(std::istream &s, unsigned encoding);
 
     /// Write complete state of tree to stream (without file header) unmodified.
-    /// Pruning the tree first produces smaller files (lossless compression)
-    std::ostream& writeData(std::ostream &s) const;
+    /// Pruning the tree first produces smaller files (lossless compression).
+    /// Uses `encoding` bytes per value.
+    std::ostream& writeData(std::ostream &s, unsigned encoding) const;
 
     typedef leaf_iterator iterator;
 
@@ -511,10 +513,10 @@ namespace octomap {
     void calcNumNodesRecurs(NODE* node, size_t& num_nodes) const;
     
     /// recursive call of readData()
-    std::istream& readNodesRecurs(NODE*, std::istream &s);
+    std::istream& readNodesRecurs(NODE*, std::istream &s, unsigned encoding);
     
     /// recursive call of writeData()
-    std::ostream& writeNodesRecurs(const NODE*, std::ostream &s) const;
+    std::ostream& writeNodesRecurs(const NODE*, std::ostream &s, unsigned encoding) const;
     
     /// Recursively delete a node and all children. Deallocates memory
     /// but does NOT set the node ptr to NULL nor updates tree size.

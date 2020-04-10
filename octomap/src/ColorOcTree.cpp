@@ -37,14 +37,14 @@ namespace octomap {
 
 
   // node implementation  --------------------------------------
-  std::ostream& ColorOcTreeNode::writeData(std::ostream &s) const {
+  std::ostream& ColorOcTreeNode::writeData(std::ostream &s, unsigned encoding) const {
     s.write((const char*) &value, sizeof(value)); // occupancy
     s.write((const char*) &color, sizeof(Color)); // color
 
     return s;
   }
 
-  std::istream& ColorOcTreeNode::readData(std::istream &s) {
+  std::istream& ColorOcTreeNode::readData(std::istream &s, unsigned encoding) {
     s.read((char*) &value, sizeof(value)); // occupancy
     s.read((char*) &color, sizeof(Color)); // color
 

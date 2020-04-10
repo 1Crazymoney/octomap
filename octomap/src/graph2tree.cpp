@@ -59,6 +59,7 @@ void printUsage(char* self){
             "  -log (enable a detailed log file with statistics) \n"
             "  -g (nodes are already in global coordinates and no transformation is required) \n"
             "  -compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
+            "  -e enable fixed-point encoding, precision in bytes between 1 and 4\n"
             "  -simple (simple scan insertion ray by ray instead of optimized) \n"
             "  -discretize (approximate raycasting on discretized coordinates, speeds up insertion) \n"
             "  -clamping <p_min> <p_max> (override default sensor model clamping probabilities between 0..1)\n"
@@ -106,6 +107,7 @@ void outputStatistics(const OcTree* tree){
 int main(int argc, char** argv) {
   // default values:
   double res = 0.1;
+  unsigned encoding = 0;
   string graphFilename = "";
   string treeFilename = "";
   double maxrange = -1;
@@ -153,6 +155,8 @@ int main(int argc, char** argv) {
       maxrange = atof(argv[++arg]);
     else if (! strcmp(argv[arg], "-n"))
       max_scan_no = atoi(argv[++arg]);
+    else if (! strcmp(argv[arg], "-e"))
+      encoding = atoi(argv[++arg]);
     else if (! strcmp(argv[arg], "-clamping") && (argc-arg < 3))
       printUsage(argv[0]);
     else if (! strcmp(argv[arg], "-clamping")){
@@ -286,7 +290,7 @@ int main(int argc, char** argv) {
   std::cout << "Pruned tree (lossless compression)\n" << "===========================\n";
   outputStatistics(tree);
 
-  tree->write(treeFilenameOT);
+  tree->write(treeFilenameOT, encoding);
 
   std::cout << "Pruned max-likelihood tree (lossy compression)\n" << "===========================\n";
   tree->toMaxLikelihood();
@@ -295,7 +299,7 @@ int main(int argc, char** argv) {
 
 
   cout << "\nWriting tree files\n===========================\n";
-  tree->write(treeFilenameMLOT);
+  tree->write(treeFilenameMLOT, encoding);
   std::cout << "Full Octree (pruned) written to "<< treeFilenameOT << std::endl;
   std::cout << "Full Octree (max.likelihood, pruned) written to "<< treeFilenameMLOT << std::endl;
   tree->writeBinary(treeFilename);

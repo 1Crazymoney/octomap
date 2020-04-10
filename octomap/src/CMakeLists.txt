@@ -34,6 +34,9 @@ ADD_SUBDIRECTORY( testing )
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
 TARGET_LINK_LIBRARIES(graph2tree octomap)
 
+ADD_EXECUTABLE(octree_precision octree_precision.cpp)
+TARGET_LINK_LIBRARIES(octree_precision octomap)
+
 ADD_EXECUTABLE(log2graph log2graph.cpp)
 TARGET_LINK_LIBRARIES(log2graph octomap)
 
@@ -76,6 +79,7 @@ install(EXPORT octomap-targets DESTINATION "${CMAKE_INSTALL_DATADIR}/octomap")
 
 install(TARGETS
 	graph2tree
+  octree_precision
 	log2graph
 	binvox2bt
 	bt2vrml

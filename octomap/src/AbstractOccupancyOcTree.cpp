@@ -143,10 +143,11 @@ namespace octomap {
     std::istream::pos_type streampos = s.tellg();
     std::getline(s, line);
     unsigned size;
+    unsigned encoding;
     double res;
     if (line.compare(0,AbstractOccupancyOcTree::binaryFileHeader.length(), AbstractOccupancyOcTree::binaryFileHeader) ==0){
       std::string id;
-      if (!AbstractOcTree::readHeader(s, id, size, res))
+      if (!AbstractOcTree::readHeader(s, id, size, res, encoding))
         return false;
       
       OCTOMAP_DEBUG_STR("Reading binary octree type "<< id);

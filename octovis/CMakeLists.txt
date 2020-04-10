@@ -65,8 +65,9 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 # libQGLViewer, if dependencies available
 SET( BUILD_VIEWER 0)
 
-option(OCTOVIS_QT5 "Link Octovis against Qt5?" ON)
+option(OCTOVIS_QT5 "Link Octovis against Qt5?" OFF)
 
+#set(OpenGL_GL_PREFERENCE GLVND)
 # Look for required libraries:
 FIND_PACKAGE(OpenGL)
 if(NOT OCTOVIS_QT5)
